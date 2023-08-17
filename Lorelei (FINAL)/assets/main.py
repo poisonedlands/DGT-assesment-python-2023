@@ -1,5 +1,6 @@
 
 # credit to https://github.com/baraltech/Menu-System-PyGame for the base code, Ronan Cantwell for the background art, and Torbjorn Olykan and William Chisnall for the music.
+# also credit to everybody at luscious locks game dev (now collapsed XD) who helped with the panning stages.
 
 #import modules 
 import pygame, sys
