@@ -1,7 +1,7 @@
-#https://chat.openai.com
 
 import pygame
 import sys
+from button import Button
 
 # Initialize Pygame
 pygame.init()
@@ -9,131 +9,301 @@ pygame.init()
 # Screen dimensions
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+SCREEN = pygame.display.set_mode((1280, 720))
 
-# Platform sizes
-platform_width = 64
-platform_height = 64
 
-# Create the screen
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("2D Platformer")
+def get_font(size): 
+    return pygame.font.Font("assets/font.ttf", size)
 
-# Load the background image (same as before)
-background_image = pygame.image.load("background.jpg")
-background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-# Load the ground image
-ground_image = pygame.image.load("ground.jpg")
-ground_image = pygame.transform.scale(ground_image, (SCREEN_WIDTH, platform_height))
-
-# Load the platform image
-platform_image = pygame.image.load("platform.jpg")
-platform_image = pygame.transform.scale(platform_image, (platform_width, platform_height))
-
-# Function to draw the player (same as before)
-
-# Function to draw a platform using the platform image
-def draw_platform(x, y):
-    screen.blit(platform_image, (x, y))
-
-# Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-
-# Player settings
-player_width = 40
-player_height = 60
-player_velocity = 5
-player_jump_power = 10
-
-# Platform settings
-platform_width = 100
-platform_height = 20
-
-# Create the screen
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("2D Platformer")
-
-# Function to draw the player
-def draw_player(x, y):
-    pygame.draw.rect(screen, WHITE, (x, y, player_width, player_height))
-
-# Function to draw a platform
-def draw_platform(x, y):
-    pygame.draw.rect(screen, WHITE, (x, y, platform_width, platform_height))
-
-# Main game loop (same as before)
 def main():
-    # Initial player position
-    player_x = SCREEN_WIDTH // 2 - player_width // 2
-    player_y = SCREEN_HEIGHT - player_height - platform_height
-
-    # Initial player velocity
-    player_dx = 0
-    player_dy = 0
-
-    # Platforms in the sky
-    platforms = [
-        (200, 400),
-        (400, 300),
-        (600, 200)
-    ]
-
+    Looped = False
+    SCREEN.fill("black")
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+        
+        MOUSE_POS = pygame.mouse.get_pos()
 
-        # Get the state of all keyboard buttons
-        keys = pygame.key.get_pressed()
-
-        # Horizontal movement
-        if keys[pygame.K_LEFT]:
-            player_dx = -player_velocity
-        elif keys[pygame.K_RIGHT]:
-            player_dx = player_velocity
-        else:
-            player_dx = 0
-
-        # Vertical movement (jumping)
-        if keys[pygame.K_SPACE] and player_y >= SCREEN_HEIGHT - player_height - platform_height:
-            player_dy = -player_jump_power
-
-        # Apply gravity
-        player_dy += 1
-
-        # Update player position
-        player_x += player_dx
-        player_y += player_dy
-
-        # Collide with the ground and platforms
-        if player_y >= SCREEN_HEIGHT - player_height - platform_height:
-            player_y = SCREEN_HEIGHT - player_height - platform_height
-            player_dy = 0
-        for platform_x, platform_y in platforms:
-            if player_x + player_width > platform_x and player_x < platform_x + platform_width and \
-               player_y + player_height >= platform_y and player_y + player_dy < platform_y:
-                player_y = platform_y - player_height
-                player_dy = 0
-
-        # Clear the screen
-        screen.fill(BLACK)
-
-        # Draw ground and platforms
-        pygame.draw.rect(screen, WHITE, (0, SCREEN_HEIGHT - platform_height, SCREEN_WIDTH, platform_height))
-        for platform_x, platform_y in platforms:
-            draw_platform(platform_x, platform_y)
-
-        # Draw the player
-        draw_player(player_x, player_y)
-
-        # Update the display
+        PLAY_TEXT = get_font(45).render("Welcome to Lorelei", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 200))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
         pygame.display.update()
 
+        if Looped == False:
+            pygame.time.delay(2000)
+
+        PLAY_TEXT = get_font(45).render("Please select a character", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 250))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()
+
+        if Looped == False:
+            pygame.time.delay(2000)
+
+        Wulf_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(380, 600), 
+                            text_input="Wulf", font=get_font(75), base_color="#d7fcd4", hovering_color="Gold")
+        
+        Heidi_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(900, 600), 
+                            text_input="Heidi", font=get_font(75), base_color="#d7fcd4", hovering_color="Gold")
+        
+        for button in [Heidi_BUTTON,Wulf_BUTTON]:
+            button.changeColor(MOUSE_POS)
+            button.update(SCREEN)
+        
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if Heidi_BUTTON.checkForInput(MOUSE_POS):
+                        Heidi_room()
+
+                    if Wulf_BUTTON.checkForInput(MOUSE_POS):
+                        Wulf_room()
+        Looped = True
+    pygame.display.update()
+    
+def Heidi_room():
+    Looped = False
+    SCREEN.fill("Pink")
+    while True:
+        MOUSE_POS = pygame.mouse.get_pos()
+
+        PLAY_TEXT = get_font(45).render("Good choice!", True, "Black")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 200))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()
+
+        if Looped == False:
+            pygame.time.delay(2000)
+        
+        PLAY_TEXT = get_font(45).render("Heidi is very intelligent,", True, "Black")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 250))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)       
+        PLAY_TEXT = get_font(45).render("but not very strong.", True, "Black")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 300))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()        
+
+        if Looped == False:
+            pygame.time.delay(2000)
+        
+        PLAY_TEXT = get_font(45).render("Are you happy with ", True, "Black")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 350))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        PLAY_TEXT = get_font(45).render("this desiscion?", True, "Black")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 400))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()
+
+        if Looped == False:
+            pygame.time.delay(2000)
+
+        YES_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(380, 600), 
+                            text_input="Yes", font=get_font(75), base_color="#d7fcd4", hovering_color="Gold")
+        
+        NO_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(900, 600), 
+                            text_input="No", font=get_font(75), base_color="#d7fcd4", hovering_color="Gold")
+        
+        for button in [YES_BUTTON,NO_BUTTON]:
+            button.changeColor(MOUSE_POS)
+            button.update(SCREEN)
+        
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if YES_BUTTON.checkForInput(MOUSE_POS):
+                        room_1()
+
+                    if NO_BUTTON.checkForInput(MOUSE_POS):
+                        main()
+
+        Looped = True
+    pygame.display.update()
+
+def Wulf_room():
+    Looped = False
+    SCREEN.fill("Blue")
+    while True:
+        MOUSE_POS = pygame.mouse.get_pos()
+
+        PLAY_TEXT = get_font(45).render("Good choice!", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 200))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()
+
+        if Looped == False:
+            pygame.time.delay(2000)
+        
+        PLAY_TEXT = get_font(45).render("Wulf is very strong,", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 250))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)       
+        PLAY_TEXT = get_font(45).render("but not very intelligent.", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 300))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()        
+
+        if Looped == False:
+            pygame.time.delay(2000)
+        
+        PLAY_TEXT = get_font(45).render("Are you happy with ", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 350))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        PLAY_TEXT = get_font(45).render("this desiscion?", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 400))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()
+
+        if Looped == False:
+            pygame.time.delay(2000)
+
+        YES_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(380, 600), 
+                            text_input="Yes", font=get_font(75), base_color="#d7fcd4", hovering_color="Gold")
+        
+        NO_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(900, 600), 
+                            text_input="No", font=get_font(75), base_color="#d7fcd4", hovering_color="Gold")
+        
+        for button in [YES_BUTTON,NO_BUTTON]:
+            button.changeColor(MOUSE_POS)
+            button.update(SCREEN)
+        
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if YES_BUTTON.checkForInput(MOUSE_POS):
+                        room_1()
+
+                    if NO_BUTTON.checkForInput(MOUSE_POS):
+                        main()
+
+        Looped = True
+    pygame.display.update()      
+
+def room_1():
+    Looped=False
+    SCREEN.fill("Black")
+    while True:
+        MOUSE_POS = pygame.mouse.get_pos()
+
+        PLAY_TEXT = get_font(45).render("Long ago on the river rhine,", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 200))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()
+
+        if Looped == False:
+            pygame.time.delay(2000)
+        
+        PLAY_TEXT = get_font(45).render("There was once a maiden by ", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 250))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)       
+        PLAY_TEXT = get_font(45).render("the name of Lorelei.", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 300))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()        
+
+        if Looped == False:
+            pygame.time.delay(2000)
+        
+        PLAY_TEXT = get_font(45).render("But her lover was unfaithful", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 350))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        PLAY_TEXT = get_font(45).render("to her,", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 400))
+
+        if Looped == False:
+            pygame.time.delay(2000)
+
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        PLAY_TEXT = get_font(45).render("and so she threw herself", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 450))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        PLAY_TEXT = get_font(45).render("into the river rhine", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 500))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()
+
+        if Looped == False:
+            pygame.time.delay(2000)
+
+        CONTINUE_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(640, 600), 
+                            text_input="Continue", font=get_font(45), base_color="#d7fcd4", hovering_color="Gold")
+        
+        for button in [CONTINUE_BUTTON]:
+            button.changeColor(MOUSE_POS)
+            button.update(SCREEN)
+        
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if CONTINUE_BUTTON.checkForInput(MOUSE_POS):
+                        room_2()
+        Looped = True
+
+def room_2():
+    Looped=False
+    SCREEN.fill("Black")
+    while True:
+        MOUSE_POS = pygame.mouse.get_pos()
+
+        PLAY_TEXT = get_font(45).render("But death was not the end", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 200))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()
+        PLAY_TEXT = get_font(45).render("for she was immortalised", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 250))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)       
+        PLAY_TEXT = get_font(45).render("As a siren,", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 300))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()        
+
+        if Looped == False:
+            pygame.time.delay(3000)
+        
+        PLAY_TEXT = get_font(45).render("forever singing on top ", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 350))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        PLAY_TEXT = get_font(45).render("of the bank of the river,", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 400))
+
+        if Looped == False:
+            pygame.time.delay(2000)
+
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        PLAY_TEXT = get_font(45).render("Luring sailors ", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 450))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        PLAY_TEXT = get_font(45).render("to thier deaths. ", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 500))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+        pygame.display.update()
+
+        if Looped == False:
+            pygame.time.delay(2000)
+
+        CONTINUE_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(640, 600), 
+                            text_input="Continue", font=get_font(45), base_color="#d7fcd4", hovering_color="Gold")
+        
+        for button in [CONTINUE_BUTTON]:
+            button.changeColor(MOUSE_POS)
+            button.update(SCREEN)
+        
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if CONTINUE_BUTTON.checkForInput(MOUSE_POS):
+                        sys.exit
+                        pygame.quit
+        Looped = True
 
 
-def main():   
-    # Start the game (same as before)
-    if __name__ == "__main__":
-        main()
+
+main()
